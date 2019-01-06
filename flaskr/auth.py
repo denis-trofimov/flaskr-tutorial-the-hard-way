@@ -1,5 +1,6 @@
 """This creates a Blueprint named 'auth'."""
 
+import functools
 from flask import (
     Blueprint, request, redirect, url_for, flash, render_template, g, session
 )
@@ -77,7 +78,7 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        g.user = get_db.execute(
+        g.user = get_db().execute(
             "SELECT * FROM user WHERE id = ?", (user_id,)
         ).fetchone()
 
@@ -85,4 +86,19 @@ def load_logged_in_user():
 def logout():
     """Remove the user id from the session."""
     session.clear()
-    return redirest(url_for("index"))
+    return redirect(url_for("index"))
+
+def login_required(view):
+    """Require Authentication in Other Views.
+
+    This decorator returns a new view function that wraps the original
+    view it’s applied to. The new function checks if a user is loaded
+    and redirects to the login page otherwise. If a user is loaded
+    the original view is called and continues normally.
+    """
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if g.user is None:
+            return redirect(url_for("auth/login"))
+        return view(**kwargs)
+    return wrapped_view
