@@ -44,7 +44,7 @@ def register():
     return render_template("auth/register.html")
 
 
-@bp.route("/loginogin", methods=("GET", "POST"))
+@bp.route("/login", methods=("GET", "POST"))
 def login():
     """Login user view."""
     if request.method == "POST":
@@ -99,6 +99,6 @@ def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
-            return redirect(url_for("auth/login"))
+            return redirect(url_for("auth.login"))
         return view(**kwargs)
     return wrapped_view
