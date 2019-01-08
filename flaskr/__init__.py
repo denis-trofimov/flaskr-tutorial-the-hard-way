@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 from dotenv import load_dotenv
-from . import db, auth
+from . import db, auth, blog
 
 
 def create_app(test_config=None):
@@ -51,6 +51,8 @@ def create_app(test_config=None):
 
     # Import and register the blueprint
     app.register_blueprint(auth.bp)
+    app.register_blueprint(blog.bp)
+    app.add_url_rule("/", endpoint="index")
 
     # a simple page that says hello
     @app.route("/hello")
