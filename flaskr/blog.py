@@ -20,7 +20,7 @@ def index():
     ).fetchall()
     return render_template("blog/index.html", posts=posts)
 
-@bp.route("/create")
+@bp.route("/create", methods=("GET", "POST"))
 @login_required
 def create():
     """Create a new post for the current user.
@@ -36,7 +36,7 @@ def create():
         if not title:
             error = "Title is required."
 
-        if error:
+        if error is not None:
             flash(error)
         else:
             db = get_db()
