@@ -1,5 +1,6 @@
 import os
 from flask import Flask
+from dotenv import load_dotenv
 from . import db, auth
 
 
@@ -18,10 +19,16 @@ def create_app(test_config=None):
     needs will happen inside the function, then the application
     will be returned.
     """
+
+    """Load environment variables from a file named .env in the current
+    directory or any of its parents or from the path specificied
+    """
+    load_dotenv(verbose=True)
+
     # create and configure the app
     app = Flask(__name__,  instance_relative_config=True)
     app.config.from_mapping(
-        SECRET_KEY="dev",
+        SECRET_KEY=os.getenv("SECRET_KEY"),
         DATABASE=os.path.join(app.instance_path, "flaskr.sqlite"),
     )
 
